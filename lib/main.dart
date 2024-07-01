@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'screens/create-account-screen.dart';
+import '/create-account-screen.dart';
 
 void main() {
   runApp(MyApp());
