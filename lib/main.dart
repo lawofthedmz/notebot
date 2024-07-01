@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
-import '/create-account-screen.dart';
+import 'screens/create.dart';
+import 'screens/signin.dart';
+import 'screens/home.dart';
+import 'screens/viewprofile.dart';
 
 void main() {
   runApp(MyApp());
@@ -13,7 +16,13 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: CreateAccountScreen(),
+      initialRoute: '/',
+      routes: {
+        '/': (context) => CreateAccountScreen(),
+        '/signin': (context) => SignInScreen(),
+        '/home': (context) => HomeScreen(),
+        '/editprofile': (context) => EditProfileScreen(),
+      },
     );
   }
 }
