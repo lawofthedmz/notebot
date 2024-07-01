@@ -38,6 +38,7 @@ class CreateAccountScreen extends StatelessWidget {
                     fontSize: 32.0,
                     fontWeight: FontWeight.bold,
                     color: Colors.white,
+                    fontFamily: 'Montserrat',
                   ),
                   textAlign: TextAlign.center,
                 ),
@@ -71,8 +72,9 @@ class CreateAccountScreen extends StatelessWidget {
                   },
                   child: Text('Sign up with email'),
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.black,
+                    primary: Colors.black,
                     padding: EdgeInsets.symmetric(vertical: 16.0),
+                    textStyle: TextStyle(fontFamily: 'Montserrat'),
                   ),
                 ),
                 SizedBox(height: 16.0),
@@ -108,6 +110,7 @@ class CreateAccountScreen extends StatelessWidget {
                     'Sign In',
                     style: TextStyle(
                       color: Colors.white,
+                      fontFamily: 'Montserrat',
                     ),
                   ),
                 ),
@@ -119,3 +122,4 @@ class CreateAccountScreen extends StatelessWidget {
     );
   }
 }
+
