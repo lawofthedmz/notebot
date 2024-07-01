@@ -71,7 +71,7 @@ class CreateAccountScreen extends StatelessWidget {
                   },
                   child: Text('Sign up with email'),
                   style: ElevatedButton.styleFrom(
-                    primary: Colors.black,
+                    backgroundColor: Colors.black,
                     padding: EdgeInsets.symmetric(vertical: 16.0),
                   ),
                 ),
