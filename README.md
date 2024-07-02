@@ -5,7 +5,7 @@ NoteBot is an AI-powered note-taking application designed to help users generate
 ## Features
 
 - **AI-Powered Note Generation**: Input a video or picture, and the Gemini API will scan it to create a note sheet with key points.
-- ** Manage Notes**: Quickly manage your notes efficiently.
+- **Manage Notes**: Quickly manage your notes efficiently.
 - **Responsive Design**: Enjoy a seamless experience across different devices and screen sizes.
 - **Social Sign-In Options**: Sign up or log in using your Google, Meta, or GitHub accounts.
 - **Secure Authentication**: Secure your notes with email and password authentication.
