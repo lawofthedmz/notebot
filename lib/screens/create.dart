@@ -42,6 +42,25 @@ class CreateAccountScreen extends StatelessWidget {
                   ),
                   textAlign: TextAlign.center,
                 ),
+                Text(
+                  'Create an account',
+                  style: TextStyle(
+                    fontSize: 24.0,
+                    color: Colors.white,
+                    fontFamily: 'Montserrat',
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                SizedBox(height: 8),
+                Text(
+                  'Enter your email to sign up and create a password.',
+                  style: TextStyle(
+                    fontSize: 16.0,
+                    color: Colors.white,
+                    fontFamily: 'Montserrat',
+                  ),
+                  textAlign: TextAlign.center,
+                ),
                 SizedBox(height: 24.0),
                 TextField(
                   decoration: InputDecoration(
@@ -70,47 +89,106 @@ class CreateAccountScreen extends StatelessWidget {
                   onPressed: () {
                     // Handle sign up with email
                   },
-                  child: Text('Sign up with email'),
+                  child: Text('Sign up with email',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontFamily: 'Montserrat',
+                      )
+                  ),
                   style: ElevatedButton.styleFrom(
-                    primary: Colors.black,
+                    backgroundColor: Colors.black,
                     padding: EdgeInsets.symmetric(vertical: 16.0),
-                    textStyle: TextStyle(fontFamily: 'Montserrat'),
                   ),
                 ),
                 SizedBox(height: 16.0),
-                Divider(color: Colors.white),
+                Row(
+                  children: [
+                    Expanded(
+                      child: Divider(color: Colors.white),),
+                    Padding(padding: const EdgeInsets.all(8.0),
+                      child: Text(
+                        'or continue with',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontFamily: 'Montserrat',
+                        ),
+                      ),
+                    ),
+                    Expanded(child: Divider(color: Colors.white,)),
+                  ],
+                ),
                 SizedBox(height: 16.0),
-                SignInButton(
-                  Buttons.Google,
-                  text: "Sign up with Google",
-                  onPressed: () {
-                    // Handle Google sign up
-                  },
+                Container(
+                  padding: const EdgeInsets.symmetric(vertical: 8.0), // Add padding to separate the buttons
+                  child: SizedBox(
+                    height: 50.0, // Set a fixed height for all buttons
+                    child: SignInButton(
+                      Buttons.Google,
+                      text: "Sign up with Google",
+                      onPressed: () {
+                        // Handle Google sign up
+                      },
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8.0),
+                      ),
+                    ),
+                  ),
                 ),
-                SignInButton(
-                  Buttons.Facebook,
-                  text: "Sign up with Meta",
-                  onPressed: () {
-                    // Handle Meta sign up
-                  },
+                Container(
+                  padding: const EdgeInsets.symmetric(vertical: 8.0), // Add padding to separate the buttons
+                  child: SizedBox(
+                    height: 50.0, // Set a fixed height for all buttons
+                    child: SignInButton(
+                      Buttons.Facebook,
+                      text: "Sign up with Meta",
+                      onPressed: () {
+                        // Handle Meta sign up
+                      },
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8.0),
+                      ),
+                    ),
+                  ),
                 ),
-                SignInButton(
-                  Buttons.GitHub,
-                  text: "Sign up with GitHub",
-                  onPressed: () {
-                    // Handle GitHub sign up
-                  },
+                Container(
+                  padding: const EdgeInsets.symmetric(vertical: 8.0), // Add padding to separate the buttons
+                  child: SizedBox(
+                    height: 50.0, // Set a fixed height for all buttons
+                    child: SignInButton(
+                      Buttons.GitHub,
+                      text: "Sign up with GitHub",
+                      onPressed: () {
+                        // Handle GitHub sign up
+                      },
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8.0),
+                      ),
+                    ),
+                  ),
                 ),
+
                 SizedBox(height: 16.0),
                 TextButton(
                   onPressed: () {
                     Navigator.pushNamed(context, '/signin');
                   },
-                  child: Text(
-                    'Sign In',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontFamily: 'Montserrat',
+                  child: RichText(
+                    text: TextSpan(
+                      text: 'Already have an account? ',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontFamily: 'Montserrat',
+                      ),
+                      children: [
+                        TextSpan(
+                          text: 'Sign in',
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontWeight: FontWeight.bold,
+                            fontFamily: 'Montserrat',
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ),
