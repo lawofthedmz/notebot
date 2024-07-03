@@ -12,6 +12,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
+  String? _errorMessage;
 
   @override
   Widget build(BuildContext context) {
@@ -103,6 +104,18 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                                 ),
                                 textAlign: TextAlign.center,
                               ),
+                              if (_errorMessage != null)
+                                Padding(
+                                  padding: const EdgeInsets.only(top: 8.0),
+                                  child: Text(
+                                    _errorMessage!,
+                                    style: TextStyle(
+                                      color: Colors.red,
+                                      fontFamily: 'Montserrat',
+                                    ),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                ),
                               SizedBox(height: 24.0),
                               Form(
                                 key: _formKey,
@@ -168,13 +181,10 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                                       // Handle signup errors (e.g., weak password, email already exists)
                                       print(
                                           'Error creating user: ${e.toString()}');
-                                      // Show an error message to the user
-                                      ScaffoldMessenger.of(context)
-                                          .showSnackBar(
-                                        SnackBar(
-                                            content: Text(
-                                                'Failed to create account.')),
-                                      );
+                                      setState(() {
+                                        _errorMessage =
+                                            'Failed to create account';
+                                      });
                                     }
                                   }
                                 },
@@ -234,13 +244,10 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                                         // Handle Google signup errors
                                         print(
                                             'Error signing in with Google: ${e.toString()}');
-                                        // Show an error message to the user
-                                        ScaffoldMessenger.of(context)
-                                            .showSnackBar(
-                                          SnackBar(
-                                              content: Text(
-                                                  'Failed to sign in with Google.')),
-                                        );
+                                        setState(() {
+                                          _errorMessage =
+                                              'Failed to sign in with Google';
+                                        });
                                       }
                                     },
                                     shape: RoundedRectangleBorder(
@@ -271,13 +278,10 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                                         // Handle GitHub signup errors
                                         print(
                                             'Error signing in with GitHub: ${e.toString()}');
-                                        // Show an error message to the user
-                                        ScaffoldMessenger.of(context)
-                                            .showSnackBar(
-                                          SnackBar(
-                                              content: Text(
-                                                  'Failed to sign in with GitHub.')),
-                                        );
+                                        setState(() {
+                                          _errorMessage =
+                                              'Failed to sign in with GitHub';
+                                        });
                                       }
                                     },
                                     shape: RoundedRectangleBorder(
@@ -356,6 +360,18 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                           ),
                           textAlign: TextAlign.center,
                         ),
+                        if (_errorMessage != null)
+                          Padding(
+                            padding: const EdgeInsets.only(top: 8.0),
+                            child: Text(
+                              _errorMessage!,
+                              style: TextStyle(
+                                color: Colors.red,
+                                fontFamily: 'Montserrat',
+                              ),
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
                         SizedBox(height: 24.0),
                         Form(
                           key: _formKey,
@@ -417,12 +433,9 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                               } catch (e) {
                                 // Handle signup errors (e.g., weak password, email already exists)
                                 print('Error creating user: ${e.toString()}');
-                                // Show an error message to the user
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                      content:
-                                          Text('Failed to create account.')),
-                                );
+                                setState(() {
+                                  _errorMessage = 'Failed to create account';
+                                });
                               }
                             }
                           },
@@ -480,12 +493,10 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                                   // Handle Google signup errors
                                   print(
                                       'Error signing in with Google: ${e.toString()}');
-                                  // Show an error message to the user
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                        content: Text(
-                                            'Failed to sign in with Google.')),
-                                  );
+                                  setState(() {
+                                    _errorMessage =
+                                        'Failed to sign in with Google';
+                                  });
                                 }
                               },
                               shape: RoundedRectangleBorder(
@@ -514,12 +525,10 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                                   // Handle GitHub signup errors
                                   print(
                                       'Error signing in with GitHub: ${e.toString()}');
-                                  // Show an error message to the user
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                        content: Text(
-                                            'Failed to sign in with GitHub.')),
-                                  );
+                                  setState(() {
+                                    _errorMessage =
+                                        'Failed to sign in with GitHub';
+                                  });
                                 }
                               },
                               shape: RoundedRectangleBorder(
