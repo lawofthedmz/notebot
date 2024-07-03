@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'screens/create.dart';
 import 'screens/signin.dart';
 import 'screens/home.dart';
-import 'screens/viewprofile.dart';
 
 // Firebase imports
 import 'package:firebase_core/firebase_core.dart';

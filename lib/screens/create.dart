@@ -223,9 +223,8 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                                     onPressed: () async {
                                       try {
                                         // Sign in with Google
-                                        final UserCredential userCredential =
-                                            await FirebaseAuth.instance
-                                                .signInWithPopup(
+                                        await FirebaseAuth.instance
+                                            .signInWithPopup(
                                           GoogleAuthProvider(),
                                         );
                                         // Navigate to HomeScreen after successful Google signup
@@ -261,9 +260,8 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                                     onPressed: () async {
                                       try {
                                         // Sign in with GitHub
-                                        final UserCredential userCredential =
-                                            await FirebaseAuth.instance
-                                                .signInWithPopup(
+                                        await FirebaseAuth.instance
+                                            .signInWithPopup(
                                           GithubAuthProvider(),
                                         );
                                         // Navigate to HomeScreen after successful GitHub signup
@@ -472,9 +470,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                               onPressed: () async {
                                 try {
                                   // Sign in with Google
-                                  final UserCredential userCredential =
-                                      await FirebaseAuth.instance
-                                          .signInWithPopup(
+                                  await FirebaseAuth.instance.signInWithPopup(
                                     GoogleAuthProvider(),
                                   );
                                   // Navigate to HomeScreen after successful Google signup
@@ -508,9 +504,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                               onPressed: () async {
                                 try {
                                   // Sign in with GitHub
-                                  final UserCredential userCredential =
-                                      await FirebaseAuth.instance
-                                          .signInWithPopup(
+                                  await FirebaseAuth.instance.signInWithPopup(
                                     GithubAuthProvider(),
                                   );
                                   // Navigate to HomeScreen after successful GitHub signup
