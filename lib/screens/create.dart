@@ -256,44 +256,6 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                                 child: SizedBox(
                                   height: 50.0,
                                   child: SignInButton(
-                                    Buttons.Facebook,
-                                    text: "Sign up with Meta",
-                                    onPressed: () async {
-                                      try {
-                                        // Sign in with Facebook
-                                        final UserCredential userCredential =
-                                            await FirebaseAuth.instance
-                                                .signInWithPopup(
-                                          FacebookAuthProvider(),
-                                        );
-                                        // Navigate to HomeScreen after successful Facebook signup
-                                        Navigator.pushReplacementNamed(
-                                            context, '/home');
-                                      } catch (e) {
-                                        // Handle Facebook signup errors
-                                        print(
-                                            'Error signing in with Facebook: ${e.toString()}');
-                                        // Show an error message to the user
-                                        ScaffoldMessenger.of(context)
-                                            .showSnackBar(
-                                          SnackBar(
-                                              content: Text(
-                                                  'Failed to sign in with Facebook.')),
-                                        );
-                                      }
-                                    },
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(8.0),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              Container(
-                                padding:
-                                    const EdgeInsets.symmetric(vertical: 8.0),
-                                child: SizedBox(
-                                  height: 50.0,
-                                  child: SignInButton(
                                     Buttons.GitHub,
                                     text: "Sign up with GitHub",
                                     onPressed: () async {
@@ -527,42 +489,6 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                                     SnackBar(
                                         content: Text(
                                             'Failed to sign in with Google.')),
-                                  );
-                                }
-                              },
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(8.0),
-                              ),
-                            ),
-                          ),
-                        ),
-                        Container(
-                          padding: const EdgeInsets.symmetric(vertical: 8.0),
-                          child: SizedBox(
-                            height: 50.0,
-                            child: SignInButton(
-                              Buttons.Facebook,
-                              text: "Sign up with Meta",
-                              onPressed: () async {
-                                try {
-                                  // Sign in with Facebook
-                                  final UserCredential userCredential =
-                                      await FirebaseAuth.instance
-                                          .signInWithPopup(
-                                    FacebookAuthProvider(),
-                                  );
-                                  // Navigate to HomeScreen after successful Facebook signup
-                                  Navigator.pushReplacementNamed(
-                                      context, '/home');
-                                } catch (e) {
-                                  // Handle Facebook signup errors
-                                  print(
-                                      'Error signing in with Facebook: ${e.toString()}');
-                                  // Show an error message to the user
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                        content: Text(
-                                            'Failed to sign in with Facebook.')),
                                   );
                                 }
                               },
