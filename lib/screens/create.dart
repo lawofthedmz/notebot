@@ -1,8 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_signin_button/flutter_signin_button.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:firebase_auth/firebase_auth.dart'; // Import Firebase Auth
 
-class CreateAccountScreen extends StatelessWidget {
+class CreateAccountScreen extends StatefulWidget {
+  @override
+  _CreateAccountScreenState createState() => _CreateAccountScreenState();
+}
+
+class _CreateAccountScreenState extends State<CreateAccountScreen> {
+  final _formKey = GlobalKey<FormState>();
+  final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
+  String? _errorMessage;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -93,33 +104,89 @@ class CreateAccountScreen extends StatelessWidget {
                                 ),
                                 textAlign: TextAlign.center,
                               ),
-                              SizedBox(height: 24.0),
-                              TextField(
-                                decoration: InputDecoration(
-                                  filled: true,
-                                  fillColor: Colors.white,
-                                  hintText: 'email@domain.com',
-                                  border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(8.0),
+                              if (_errorMessage != null)
+                                Padding(
+                                  padding: const EdgeInsets.only(top: 8.0),
+                                  child: Text(
+                                    _errorMessage!,
+                                    style: TextStyle(
+                                      color: Colors.red,
+                                      fontFamily: 'Montserrat',
+                                    ),
+                                    textAlign: TextAlign.center,
                                   ),
                                 ),
-                              ),
-                              SizedBox(height: 16.0),
-                              TextField(
-                                obscureText: true,
-                                decoration: InputDecoration(
-                                  filled: true,
-                                  fillColor: Colors.white,
-                                  hintText: 'Password...',
-                                  border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(8.0),
-                                  ),
+                              SizedBox(height: 24.0),
+                              Form(
+                                key: _formKey,
+                                child: Column(
+                                  children: [
+                                    TextFormField(
+                                      controller: _emailController,
+                                      decoration: InputDecoration(
+                                        filled: true,
+                                        fillColor: Colors.white,
+                                        hintText: 'email@domain.com',
+                                        border: OutlineInputBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(8.0),
+                                        ),
+                                      ),
+                                      validator: (value) {
+                                        if (value == null || value.isEmpty) {
+                                          return 'Please enter your email';
+                                        }
+                                        return null;
+                                      },
+                                    ),
+                                    SizedBox(height: 16.0),
+                                    TextFormField(
+                                      controller: _passwordController,
+                                      obscureText: true,
+                                      decoration: InputDecoration(
+                                        filled: true,
+                                        fillColor: Colors.white,
+                                        hintText: 'Password...',
+                                        border: OutlineInputBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(8.0),
+                                        ),
+                                      ),
+                                      validator: (value) {
+                                        if (value == null || value.isEmpty) {
+                                          return 'Please enter your password';
+                                        }
+                                        return null;
+                                      },
+                                    ),
+                                  ],
                                 ),
                               ),
                               SizedBox(height: 16.0),
                               ElevatedButton(
-                                onPressed: () {
-                                  // Handle sign up with email
+                                onPressed: () async {
+                                  if (_formKey.currentState!.validate()) {
+                                    try {
+                                      // Create a new user with email and password
+                                      await FirebaseAuth.instance
+                                          .createUserWithEmailAndPassword(
+                                        email: _emailController.text.trim(),
+                                        password:
+                                            _passwordController.text.trim(),
+                                      );
+                                      // Navigate to HomeScreen after successful signup
+                                      Navigator.pushReplacementNamed(
+                                          context, '/home');
+                                    } catch (e) {
+                                      // Handle signup errors (e.g., weak password, email already exists)
+                                      print(
+                                          'Error creating user: ${e.toString()}');
+                                      setState(() {
+                                        _errorMessage =
+                                            'Failed to create account';
+                                      });
+                                    }
+                                  }
                                 },
                                 child: Text(
                                   'Sign up with email',
@@ -156,14 +223,32 @@ class CreateAccountScreen extends StatelessWidget {
                               ),
                               SizedBox(height: 16.0),
                               Container(
-                                padding: const EdgeInsets.symmetric(vertical: 8.0),
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 8.0),
                                 child: SizedBox(
                                   height: 50.0,
                                   child: SignInButton(
                                     Buttons.Google,
                                     text: "Sign up with Google",
-                                    onPressed: () {
-                                      // Handle Google sign up
+                                    onPressed: () async {
+                                      try {
+                                        // Sign in with Google
+                                        await FirebaseAuth.instance
+                                            .signInWithPopup(
+                                          GoogleAuthProvider(),
+                                        );
+                                        // Navigate to HomeScreen after successful Google signup
+                                        Navigator.pushReplacementNamed(
+                                            context, '/home');
+                                      } catch (e) {
+                                        // Handle Google signup errors
+                                        print(
+                                            'Error signing in with Google: ${e.toString()}');
+                                        setState(() {
+                                          _errorMessage =
+                                              'Failed to sign in with Google';
+                                        });
+                                      }
                                     },
                                     shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(8.0),
@@ -172,30 +257,32 @@ class CreateAccountScreen extends StatelessWidget {
                                 ),
                               ),
                               Container(
-                                padding: const EdgeInsets.symmetric(vertical: 8.0),
-                                child: SizedBox(
-                                  height: 50.0,
-                                  child: SignInButton(
-                                    Buttons.Facebook,
-                                    text: "Sign up with Meta",
-                                    onPressed: () {
-                                      // Handle Meta sign up
-                                    },
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(8.0),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              Container(
-                                padding: const EdgeInsets.symmetric(vertical: 8.0),
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 8.0),
                                 child: SizedBox(
                                   height: 50.0,
                                   child: SignInButton(
                                     Buttons.GitHub,
                                     text: "Sign up with GitHub",
-                                    onPressed: () {
-                                      // Handle GitHub sign up
+                                    onPressed: () async {
+                                      try {
+                                        // Sign in with GitHub
+                                        await FirebaseAuth.instance
+                                            .signInWithPopup(
+                                          GithubAuthProvider(),
+                                        );
+                                        // Navigate to HomeScreen after successful GitHub signup
+                                        Navigator.pushReplacementNamed(
+                                            context, '/home');
+                                      } catch (e) {
+                                        // Handle GitHub signup errors
+                                        print(
+                                            'Error signing in with GitHub: ${e.toString()}');
+                                        setState(() {
+                                          _errorMessage =
+                                              'Failed to sign in with GitHub';
+                                        });
+                                      }
                                     },
                                     shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(8.0),
@@ -273,33 +360,84 @@ class CreateAccountScreen extends StatelessWidget {
                           ),
                           textAlign: TextAlign.center,
                         ),
-                        SizedBox(height: 24.0),
-                        TextField(
-                          decoration: InputDecoration(
-                            filled: true,
-                            fillColor: Colors.white,
-                            hintText: 'email@domain.com',
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(8.0),
+                        if (_errorMessage != null)
+                          Padding(
+                            padding: const EdgeInsets.only(top: 8.0),
+                            child: Text(
+                              _errorMessage!,
+                              style: TextStyle(
+                                color: Colors.red,
+                                fontFamily: 'Montserrat',
+                              ),
+                              textAlign: TextAlign.center,
                             ),
                           ),
-                        ),
-                        SizedBox(height: 16.0),
-                        TextField(
-                          obscureText: true,
-                          decoration: InputDecoration(
-                            filled: true,
-                            fillColor: Colors.white,
-                            hintText: 'Password...',
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(8.0),
-                            ),
+                        SizedBox(height: 24.0),
+                        Form(
+                          key: _formKey,
+                          child: Column(
+                            children: [
+                              TextFormField(
+                                controller: _emailController,
+                                decoration: InputDecoration(
+                                  filled: true,
+                                  fillColor: Colors.white,
+                                  hintText: 'email@domain.com',
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(8.0),
+                                  ),
+                                ),
+                                validator: (value) {
+                                  if (value == null || value.isEmpty) {
+                                    return 'Please enter your email';
+                                  }
+                                  return null;
+                                },
+                              ),
+                              SizedBox(height: 16.0),
+                              TextFormField(
+                                controller: _passwordController,
+                                obscureText: true,
+                                decoration: InputDecoration(
+                                  filled: true,
+                                  fillColor: Colors.white,
+                                  hintText: 'Password...',
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(8.0),
+                                  ),
+                                ),
+                                validator: (value) {
+                                  if (value == null || value.isEmpty) {
+                                    return 'Please enter your password';
+                                  }
+                                  return null;
+                                },
+                              ),
+                            ],
                           ),
                         ),
                         SizedBox(height: 16.0),
                         ElevatedButton(
-                          onPressed: () {
-                            // Handle sign up with email
+                          onPressed: () async {
+                            if (_formKey.currentState!.validate()) {
+                              try {
+                                // Create a new user with email and password
+                                await FirebaseAuth.instance
+                                    .createUserWithEmailAndPassword(
+                                  email: _emailController.text.trim(),
+                                  password: _passwordController.text.trim(),
+                                );
+                                // Navigate to HomeScreen after successful signup
+                                Navigator.pushReplacementNamed(
+                                    context, '/home');
+                              } catch (e) {
+                                // Handle signup errors (e.g., weak password, email already exists)
+                                print('Error creating user: ${e.toString()}');
+                                setState(() {
+                                  _errorMessage = 'Failed to create account';
+                                });
+                              }
+                            }
                           },
                           child: Text(
                             'Sign up with email',
@@ -342,24 +480,24 @@ class CreateAccountScreen extends StatelessWidget {
                             child: SignInButton(
                               Buttons.Google,
                               text: "Sign up with Google",
-                              onPressed: () {
-                                // Handle Google sign up
-                              },
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(8.0),
-                              ),
-                            ),
-                          ),
-                        ),
-                        Container(
-                          padding: const EdgeInsets.symmetric(vertical: 8.0),
-                          child: SizedBox(
-                            height: 50.0,
-                            child: SignInButton(
-                              Buttons.Facebook,
-                              text: "Sign up with Meta",
-                              onPressed: () {
-                                // Handle Meta sign up
+                              onPressed: () async {
+                                try {
+                                  // Sign in with Google
+                                  await FirebaseAuth.instance.signInWithPopup(
+                                    GoogleAuthProvider(),
+                                  );
+                                  // Navigate to HomeScreen after successful Google signup
+                                  Navigator.pushReplacementNamed(
+                                      context, '/home');
+                                } catch (e) {
+                                  // Handle Google signup errors
+                                  print(
+                                      'Error signing in with Google: ${e.toString()}');
+                                  setState(() {
+                                    _errorMessage =
+                                        'Failed to sign in with Google';
+                                  });
+                                }
                               },
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(8.0),
@@ -374,8 +512,24 @@ class CreateAccountScreen extends StatelessWidget {
                             child: SignInButton(
                               Buttons.GitHub,
                               text: "Sign up with GitHub",
-                              onPressed: () {
-                                // Handle GitHub sign up
+                              onPressed: () async {
+                                try {
+                                  // Sign in with GitHub
+                                  await FirebaseAuth.instance.signInWithPopup(
+                                    GithubAuthProvider(),
+                                  );
+                                  // Navigate to HomeScreen after successful GitHub signup
+                                  Navigator.pushReplacementNamed(
+                                      context, '/home');
+                                } catch (e) {
+                                  // Handle GitHub signup errors
+                                  print(
+                                      'Error signing in with GitHub: ${e.toString()}');
+                                  setState(() {
+                                    _errorMessage =
+                                        'Failed to sign in with GitHub';
+                                  });
+                                }
                               },
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(8.0),

@@ -1,20 +1,18 @@
-# notebot
+# NoteBot
 
-A new Flutter project.
+NoteBot is an AI-powered note-taking application designed to help users generate notes from videos or pictures. With NoteBot, you can easily create an account, sign in, and manage your notes seamlessly. The application offers integration with popular services like Google, Meta, and GitHub for easy sign-in and sign-up options.
 
-## Getting Started
+## Features
 
-This project is a starting point for a Flutter application.
+- **AI-Powered Note Generation**: Input a video or picture, and the Gemini API will scan it to create a note sheet with key points.
+- **Manage Notes**: Quickly manage your notes efficiently.
+- **Responsive Design**: Enjoy a seamless experience across different devices and screen sizes.
+- **Social Sign-In Options**: Sign up or log in using your Google, Meta, or GitHub accounts.
+- **Secure Authentication**: Secure your notes with email and password authentication.
 
-A few resources to get you started if this is your first Flutter project:
+## Technologies Used
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
-
-
-## Run the project
-Just type ```flutter run```
+- **Flutter**: For building the cross-platform mobile and web application.
+- **Dart**: Programming language used for Flutter development.
+- **Firebase**: For authentication and real-time database management.
+- **Gemini API**: For scanning videos or pictures and generating notes.
