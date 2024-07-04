@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'screens/viewprofile.dart';
 import 'screens/create.dart';
 import 'screens/signin.dart';
 import 'screens/home.dart';
@@ -41,8 +42,10 @@ class MyApp extends StatelessWidget {
         '/signin': (context) => SignInScreen(),
         '/create': (context) => CreateAccountScreen(),
         '/home': (context) => HomeScreen(),
+        '/viewprofile': (context) => ViewProfile(),
         // '/editprofile': (context) => EditProfileScreen(),
       },
     );
   }
 }
+
