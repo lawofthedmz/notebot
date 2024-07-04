@@ -16,14 +16,15 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      initialRoute: '/',
       routes: {
         '/': (context) => CreateAccountScreen(),
         '/signin': (context) => SignInScreen(),
         '/create': (context) => CreateAccountScreen(),
-        // '/home': (context) => HomeScreen(),
+        '/home': (context) => HomeScreen(),
+        '/viewprofile': (context) => ViewProfile(),
         // '/editprofile': (context) => EditProfileScreen(),
       },
     );
   }
 }
+
