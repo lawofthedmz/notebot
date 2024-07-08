@@ -39,6 +39,8 @@ class _BottomNavBarState extends State<BottomNavBar> {
       child: ClipRRect(
         borderRadius: BorderRadius.circular(30.0), // Ensure the BottomNavigationBar is clipped within the rounded container
         child: BottomNavigationBar(
+          showSelectedLabels: false, 
+          showUnselectedLabels: false,
           backgroundColor: Color.fromARGB(121, 255, 255, 255),
           items: const <BottomNavigationBarItem>[
             BottomNavigationBarItem(

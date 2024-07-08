@@ -24,6 +24,7 @@ class MyApp extends StatelessWidget {
       title: 'NoteBot',
       theme: ThemeData(
         primarySwatch: Colors.blue,
+        fontFamily: "Montserrat",
       ),
       // Use StreamBuilder to determine the initial route
       home: StreamBuilder<User?>(

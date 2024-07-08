@@ -40,13 +40,11 @@ class ViewProfile extends StatelessWidget {
                 SizedBox(height:MediaQuery.of(context).size.height, child: Sidebar()),
                 Expanded(
                   child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Column(
                         
                         children: [
                           Row(
-                                                mainAxisAlignment: MainAxisAlignment.center,
                       
                             children: [
                               Padding(
@@ -70,10 +68,12 @@ class ViewProfile extends StatelessWidget {
                             ],
                           ),
                         Row(
-                                                mainAxisAlignment: MainAxisAlignment.center,
                       
                             children: [
-                              Text("Email", style: TextStyle(fontSize: 20.0, color: Colors.white)),
+                              Padding(
+                                padding: const EdgeInsets.only(left: 124.0),
+                                child: Text("Email", style: TextStyle(fontSize: 20.0, color: Colors.white)),
+                              ),
                               Padding(
                                 padding: const EdgeInsets.only(left:200.0),
                                 child: Text("name@domain.com",style: TextStyle(fontSize: 20.0, color: Colors.white),),
@@ -81,9 +81,8 @@ class ViewProfile extends StatelessWidget {
                             ],
                           ),
                        Padding(
-                         padding: const EdgeInsets.only(top: 53.0),
+                         padding: const EdgeInsets.only(top: 53.0, left: 50.0),
                          child: Row(
-                                                  mainAxisAlignment: MainAxisAlignment.center,
                                                
                               children: [
                                 Container(
