@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:note_bot/screens/home.dart';
+import 'package:note_bot/screens/viewprofile.dart';
 
 class Sidebar extends StatefulWidget {
   @override
@@ -28,6 +30,7 @@ class _SidebarState extends State<Sidebar> {
                 setState(() {
                   _selectedIndex = 0;
                 });
+                Navigator.push(context, MaterialPageRoute(builder: (context) => HomeScreen()));
                 // Navigate to home screen
               },
             ),
@@ -39,6 +42,7 @@ class _SidebarState extends State<Sidebar> {
                 setState(() {
                   _selectedIndex = 1;
                 });
+                Navigator.push(context, MaterialPageRoute(builder: (context) => ViewProfile()));
                 // Navigate to settings screen
               },
             ),

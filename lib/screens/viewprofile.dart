@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:note_bot/screens/bottomnavbar.dart';
 import 'package:note_bot/screens/sidebar.dart';
 
 class ViewProfile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(body: Stack(
+    return Scaffold(
+      extendBody: true,
+      bottomNavigationBar: MediaQuery.of(context).size.width < 800 ?  BottomNavBar(): null,
+      body: Stack(
         children: [
           // Gradient Background
           Container(
@@ -24,7 +28,10 @@ class ViewProfile extends StatelessWidget {
               fit: BoxFit.cover,
             ),
           ),
-          // SearchBarModule(),
+          LayoutBuilder(
+        builder: (BuildContext context, BoxConstraints constraints) {
+          if (constraints.maxWidth > 800) {
+            return
           SizedBox(
             height: MediaQuery.of(context).size.height,
             width: MediaQuery.of(context).size.width,
@@ -33,13 +40,11 @@ class ViewProfile extends StatelessWidget {
                 SizedBox(height:MediaQuery.of(context).size.height, child: Sidebar()),
                 Expanded(
                   child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Column(
                         
                         children: [
                           Row(
-                                                mainAxisAlignment: MainAxisAlignment.center,
                       
                             children: [
                               Padding(
@@ -63,10 +68,12 @@ class ViewProfile extends StatelessWidget {
                             ],
                           ),
                         Row(
-                                                mainAxisAlignment: MainAxisAlignment.center,
                       
                             children: [
-                              Text("Email", style: TextStyle(fontSize: 20.0, color: Colors.white)),
+                              Padding(
+                                padding: const EdgeInsets.only(left: 124.0),
+                                child: Text("Email", style: TextStyle(fontSize: 20.0, color: Colors.white)),
+                              ),
                               Padding(
                                 padding: const EdgeInsets.only(left:200.0),
                                 child: Text("name@domain.com",style: TextStyle(fontSize: 20.0, color: Colors.white),),
@@ -74,9 +81,8 @@ class ViewProfile extends StatelessWidget {
                             ],
                           ),
                        Padding(
-                         padding: const EdgeInsets.only(top: 53.0),
+                         padding: const EdgeInsets.only(top: 53.0, left: 50.0),
                          child: Row(
-                                                  mainAxisAlignment: MainAxisAlignment.center,
                                                
                               children: [
                                 Container(
@@ -105,7 +111,63 @@ class ViewProfile extends StatelessWidget {
             
               ],
             ),
-          ),
+          );}
+          else{
+            return Container(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                        Container(margin: EdgeInsets.only(top: 30.0,), width: constraints.maxWidth, decoration:BoxDecoration(border: Border(bottom: BorderSide(color: Colors.white))), child:Padding(
+                          padding: const EdgeInsets.only(bottom: 10.0),
+                          child: Text("Profile", textAlign: TextAlign.center, style:TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 20.0), ),
+                        )),
+                        Padding(
+                        padding: const EdgeInsets.only(top: 30.0),
+                        child: CircleAvatar(
+                          radius: 32,
+                                      child: Text('JD'),
+                                    ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(top:18.0),
+                        child: Text("Edit profile image", style: TextStyle(color: Color.fromARGB(255, 13, 153, 255), fontSize: 20.0),),
+                      ),
+                     
+                                              Row(
+                                            mainAxisAlignment: MainAxisAlignment.center,
+                                            
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.only(top: 46.0),
+                            child: Text("Email", style: TextStyle(fontSize: 20.0, color: Colors.white)),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(left: 30.0, top: 46.0),
+                            child: Text("name@domain.com",style: TextStyle(fontSize: 20.0, color: Colors.white),),
+                          )
+                        ],
+                      ),
+                                             Padding(
+                                               padding: const EdgeInsets.only(top: 53.0),
+                                               child: Row(
+                                              mainAxisAlignment: MainAxisAlignment.center,
+                                           
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.all(15.5),
+                              decoration: BoxDecoration(                                color: Color.fromARGB(127, 0, 0, 0),
+                            borderRadius: BorderRadius.circular(50)),
+                              child: Text("Change Password", style: TextStyle(fontSize: 20.0, color: Colors.white)),
+                            ),
+                          ],
+                        ),
+                                             )
+                    ]
+                    )
+                    );
+          }
+          
+          })
               ]
               )
               );
