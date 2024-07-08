@@ -34,7 +34,7 @@ class MyApp extends StatelessWidget {
             return HomeScreen();
           } else {
             // User is not logged in, navigate to CreateAccountScreen
-            return SignInScreen();
+            return HomeScreen();
           }
         },
       ),
