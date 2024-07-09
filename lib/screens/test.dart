@@ -2,8 +2,8 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:google_generative_ai/google_generative_ai.dart';
+import 'package:http/http.dart' as http;
 import 'dart:typed_data';
 
 void main() async {
@@ -43,7 +43,7 @@ class _TestScreenState extends State<TestScreen> {
   }
 
   void _initializeModel() async {
-    final apiKey = const String.fromEnvironment('API_KEY');
+    const apiKey = String.fromEnvironment('API_KEY');
     if (apiKey.isEmpty) {
       print('No API_KEY environment variable');
       return;
@@ -68,7 +68,7 @@ class _TestScreenState extends State<TestScreen> {
     }
   }
 
-  Future<void> _uploadVideo() async {
+  Future<void> _processVideoInChunks() async {
     if (_selectedFile == null || _model == null) return;
 
     setState(() {
@@ -79,30 +79,37 @@ class _TestScreenState extends State<TestScreen> {
       // Get the video bytes
       Uint8List? videoBytes;
       if (_selectedFile!.bytes != null) {
-        // If the file was picked on the web
         videoBytes = _selectedFile!.bytes;
       } else if (_selectedFile!.path != null) {
-        // If the file was picked on a non-web platform
         videoBytes = await File(_selectedFile!.path!).readAsBytes();
       } else {
         throw Exception('No valid file path or bytes available');
       }
 
-      // Upload the video to Firebase Storage
-      String fileName = _selectedFile!.name;
-      FirebaseStorage storage = FirebaseStorage.instance;
-      Reference ref = storage.ref().child('uploads/$fileName');
-      UploadTask uploadTask = ref.putData(videoBytes!);
+      // Ensure videoBytes is not null before proceeding
+      if (videoBytes == null) {
+        throw Exception('Failed to read video bytes');
+      }
 
-      TaskSnapshot snapshot = await uploadTask;
-      String downloadUrl = await snapshot.ref.getDownloadURL();
+      // Split the video into chunks of 20MB or less
+      const int chunkSize = 20 * 1024 * 1024; // 20MB chunk size
+      List<Uint8List> chunks = [];
+      for (int i = 0; i < videoBytes.length; i += chunkSize) {
+        int end = (i + chunkSize < videoBytes.length)
+            ? i + chunkSize
+            : videoBytes.length;
+        chunks.add(videoBytes.sublist(i, end));
+      }
 
-      print('Upload successful. URL: $downloadUrl');
+      for (int i = 0; i < chunks.length; i++) {
+        print('Uploading chunk $i');
+        await _uploadChunk(chunks[i], i);
+      }
 
-      // Send this URL to Gemini API
-      await _sendToGemini(downloadUrl);
+      // Combine results to create notesheet
+      await _createNotesheet();
     } catch (e) {
-      print('Error during video upload: $e');
+      print('Error during video processing: $e');
     } finally {
       setState(() {
         _isUploading = false;
@@ -110,22 +117,52 @@ class _TestScreenState extends State<TestScreen> {
     }
   }
 
-  Future<void> _sendToGemini(String downloadUrl) async {
-    // Create the content for the model with the URL as part of the prompt
+  Future<void> _uploadChunk(Uint8List chunk, int index) async {
+    const apiKey = String.fromEnvironment('API_KEY');
+    if (apiKey.isEmpty) {
+      print('No API_KEY environment variable');
+      return;
+    }
+
+    try {
+      String apiUrl =
+          "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=$apiKey";
+      var response = await http.post(
+        Uri.parse(apiUrl),
+        headers: {
+          "Content-Type": "application/octet-stream",
+          "Chunk-Index": "$index",
+        },
+        body: chunk,
+      );
+
+      if (response.statusCode == 200) {
+        print('Chunk $index upload successful');
+      } else {
+        print('Error uploading chunk $index: ${response.body}');
+      }
+    } catch (e) {
+      print('Error uploading chunk $index: $e');
+    }
+  }
+
+  Future<void> _createNotesheet() async {
+    // Create the content for the model with the base64 data as part of the prompt
     final content = [
       Content.multi([
-        TextPart("Generate a notesheet for this video: $downloadUrl"),
+        TextPart("Generate a notesheet for the uploaded video chunks."),
       ])
     ];
 
     // Call the model's generateContent method
-    final response = await _model!.generateContent(content);
+    final GenerateContentResponse response =
+        await _model!.generateContent(content);
 
     setState(() {
       _notesheet = response.text;
     });
 
-    print('Notesheet received: $_notesheet');
+    print('Notesheet received: ${response.text}');
   }
 
   @override
@@ -144,8 +181,9 @@ class _TestScreenState extends State<TestScreen> {
             ),
             SizedBox(height: 20),
             ElevatedButton(
-              onPressed: _isUploading ? null : _uploadVideo,
-              child: Text(_isUploading ? 'Uploading...' : 'Upload Video'),
+              onPressed: _isUploading ? null : _processVideoInChunks,
+              child: Text(
+                  _isUploading ? 'Processing...' : 'Process Video in Chunks'),
             ),
             SizedBox(height: 20),
             _selectedFile != null
