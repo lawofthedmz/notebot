@@ -48,3 +48,7 @@ app.*.map.json
 
 # Envirenment file
 .env 
+
+# Assets/envirenment file
+notebot\assets\.env
+assets/.env
