@@ -63,14 +63,6 @@ class _SidebarState extends State<Sidebar> {
                   MaterialPageRoute(builder: (context) => UploadScreen()));
             },
           ),
-          ListTile(
-            leading: Icon(Icons.exit_to_app),
-            title: Text('Logout'),
-            onTap: () async {
-              await FirebaseAuth.instance.signOut();
-              Navigator.pushReplacementNamed(context, '/signin');
-            },
-          ),
         ],
       ),
     );

@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_signin_button/flutter_signin_button.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:firebase_auth/firebase_auth.dart'; // Import Firebase Auth
 
 class SignInScreen extends StatefulWidget {
   @override
@@ -13,6 +14,31 @@ class _SignInScreenState extends State<SignInScreen> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   String? _errorMessage;
+
+  Future<void> _signIn() async {
+    if (_formKey.currentState!.validate()) {
+      try {
+        // Sign in with email and password
+        await FirebaseAuth.instance.signInWithEmailAndPassword(
+          email: _emailController.text.trim(),
+          password: _passwordController.text.trim(),
+        );
+
+        // Save login state
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        prefs.setBool('isLoggedIn', true);
+
+        // Navigate to HomeScreen
+        Navigator.pushReplacementNamed(context, '/home');
+      } catch (e) {
+        // Handle sign in errors
+        print('Error signing in: ${e.toString()}');
+        setState(() {
+          _errorMessage = 'Incorrect email or password';
+        });
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -164,30 +190,7 @@ class _SignInScreenState extends State<SignInScreen> {
                               ),
                               SizedBox(height: 16.0),
                               ElevatedButton(
-                                onPressed: () async {
-                                  if (_formKey.currentState!.validate()) {
-                                    try {
-                                      // Sign in with email and password
-                                      await FirebaseAuth.instance
-                                          .signInWithEmailAndPassword(
-                                        email: _emailController.text.trim(),
-                                        password:
-                                            _passwordController.text.trim(),
-                                      );
-                                      // Navigate to HomeScreen after successful sign in
-                                      Navigator.pushReplacementNamed(
-                                          context, '/home');
-                                    } catch (e) {
-                                      // Handle sign in errors (e.g., wrong password, user not found)
-                                      print(
-                                          'Error signing in: ${e.toString()}');
-                                      setState(() {
-                                        _errorMessage =
-                                            'Incorrect email or password';
-                                      });
-                                    }
-                                  }
-                                },
+                                onPressed: _signIn,
                                 child: Text(
                                   'Sign in with email',
                                   style: TextStyle(
@@ -237,7 +240,13 @@ class _SignInScreenState extends State<SignInScreen> {
                                             .signInWithPopup(
                                           GoogleAuthProvider(),
                                         );
-                                        // Navigate to HomeScreen after successful Google sign in
+                                        // Save login state
+                                        SharedPreferences prefs =
+                                            await SharedPreferences
+                                                .getInstance();
+                                        prefs.setBool('isLoggedIn', true);
+
+                                        // Navigate to HomeScreen
                                         Navigator.pushReplacementNamed(
                                             context, '/home');
                                       } catch (e) {
@@ -271,7 +280,13 @@ class _SignInScreenState extends State<SignInScreen> {
                                             .signInWithPopup(
                                           GithubAuthProvider(),
                                         );
-                                        // Navigate to HomeScreen after successful GitHub sign in
+                                        // Save login state
+                                        SharedPreferences prefs =
+                                            await SharedPreferences
+                                                .getInstance();
+                                        prefs.setBool('isLoggedIn', true);
+
+                                        // Navigate to HomeScreen
                                         Navigator.pushReplacementNamed(
                                             context, '/home');
                                       } catch (e) {
@@ -418,27 +433,7 @@ class _SignInScreenState extends State<SignInScreen> {
                         ),
                         SizedBox(height: 16.0),
                         ElevatedButton(
-                          onPressed: () async {
-                            if (_formKey.currentState!.validate()) {
-                              try {
-                                // Sign in with email and password
-                                await FirebaseAuth.instance
-                                    .signInWithEmailAndPassword(
-                                  email: _emailController.text.trim(),
-                                  password: _passwordController.text.trim(),
-                                );
-                                // Navigate to HomeScreen after successful sign in
-                                Navigator.pushReplacementNamed(
-                                    context, '/home');
-                              } catch (e) {
-                                // Handle sign in errors (e.g., wrong password, user not found)
-                                print('Error signing in: ${e.toString()}');
-                                setState(() {
-                                  _errorMessage = 'Incorrect email or password';
-                                });
-                              }
-                            }
-                          },
+                          onPressed: _signIn,
                           child: Text(
                             'Sign in with email',
                             style: TextStyle(
@@ -486,7 +481,12 @@ class _SignInScreenState extends State<SignInScreen> {
                                   await FirebaseAuth.instance.signInWithPopup(
                                     GoogleAuthProvider(),
                                   );
-                                  // Navigate to HomeScreen after successful Google sign in
+                                  // Save login state
+                                  SharedPreferences prefs =
+                                      await SharedPreferences.getInstance();
+                                  prefs.setBool('isLoggedIn', true);
+
+                                  // Navigate to HomeScreen
                                   Navigator.pushReplacementNamed(
                                       context, '/home');
                                 } catch (e) {
@@ -518,7 +518,12 @@ class _SignInScreenState extends State<SignInScreen> {
                                   await FirebaseAuth.instance.signInWithPopup(
                                     GithubAuthProvider(),
                                   );
-                                  // Navigate to HomeScreen after successful GitHub sign in
+                                  // Save login state
+                                  SharedPreferences prefs =
+                                      await SharedPreferences.getInstance();
+                                  prefs.setBool('isLoggedIn', true);
+
+                                  // Navigate to HomeScreen
                                   Navigator.pushReplacementNamed(
                                       context, '/home');
                                 } catch (e) {

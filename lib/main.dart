@@ -28,7 +28,7 @@ class MyApp extends StatelessWidget {
         fontFamily: "Montserrat",
       ),
       // Directly navigate to HomeScreen
-      home: HomeScreen(),
+      home: SignInScreen(),
       routes: {
         '/signin': (context) => SignInScreen(),
         '/create': (context) => CreateAccountScreen(),
