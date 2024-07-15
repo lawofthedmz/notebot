@@ -34,8 +34,8 @@ class MyApp extends StatelessWidget {
             // User is logged in, navigate to HomeScreen
             return HomeScreen();
           } else {
-            // User is not logged in, navigate to CreateAccountScreen
-            return HomeScreen();
+            // User is not logged in, navigate to SignInScreen
+            return SignInScreen();
           }
         },
       ),
@@ -49,4 +49,3 @@ class MyApp extends StatelessWidget {
     );
   }
 }
-
