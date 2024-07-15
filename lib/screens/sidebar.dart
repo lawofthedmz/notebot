@@ -3,6 +3,7 @@ import 'package:note_bot/screens/home.dart';
 import 'package:note_bot/screens/viewprofile.dart';
 import 'package:note_bot/screens/upload.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Sidebar extends StatefulWidget {
   @override
@@ -11,6 +12,11 @@ class Sidebar extends StatefulWidget {
 
 class _SidebarState extends State<Sidebar> {
   int _selectedIndex = 0;
+
+  Future<void> _setLoginStatus(bool status) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('isLoggedIn', status);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -61,6 +67,15 @@ class _SidebarState extends State<Sidebar> {
               });
               Navigator.pushReplacement(context,
                   MaterialPageRoute(builder: (context) => UploadScreen()));
+            },
+          ),
+          ListTile(
+            leading: Icon(Icons.exit_to_app),
+            title: Text('Logout'),
+            onTap: () async {
+              await FirebaseAuth.instance.signOut();
+              await _setLoginStatus(false); // Clear login status
+              Navigator.pushReplacementNamed(context, '/signin');
             },
           ),
         ],

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'screens/viewprofile.dart';
 import 'screens/create.dart';
 import 'screens/signin.dart';
@@ -15,10 +16,15 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
   await dotenv.load(fileName: ".env");
-  runApp(MyApp());
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  bool? isLoggedIn = prefs.getBool('isLoggedIn');
+  runApp(MyApp(isLoggedIn: isLoggedIn ?? false));
 }
 
 class MyApp extends StatelessWidget {
+  final bool isLoggedIn;
+  MyApp({required this.isLoggedIn});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -28,7 +34,7 @@ class MyApp extends StatelessWidget {
         fontFamily: "Montserrat",
       ),
       // Directly navigate to HomeScreen
-      home: SignInScreen(),
+      home: isLoggedIn ? HomeScreen() : SignInScreen(),
       routes: {
         '/signin': (context) => SignInScreen(),
         '/create': (context) => CreateAccountScreen(),
