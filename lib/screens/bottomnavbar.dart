@@ -20,7 +20,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
         break;
       case 1:
         // Navigate to AddNote Screen
-        Navigator.pushNamed(context, '/control');
+        Navigator.pushNamed(context, '/upload');
         break;
       case 2:
         // Navigate to Profile Screen
@@ -32,14 +32,16 @@ class _BottomNavBarState extends State<BottomNavBar> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: EdgeInsets.all(16.0), //Add margin so it doesn't touch the sides or bottom
+      margin: EdgeInsets.all(
+          16.0), //Add margin so it doesn't touch the sides or bottom
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(30.0), // Rounded borders
       ),
       child: ClipRRect(
-        borderRadius: BorderRadius.circular(30.0), // Ensure the BottomNavigationBar is clipped within the rounded container
+        borderRadius: BorderRadius.circular(
+            30.0), // Ensure the BottomNavigationBar is clipped within the rounded container
         child: BottomNavigationBar(
-          showSelectedLabels: false, 
+          showSelectedLabels: false,
           showUnselectedLabels: false,
           backgroundColor: Color.fromARGB(121, 255, 255, 255),
           items: const <BottomNavigationBarItem>[
