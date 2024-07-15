@@ -1,8 +1,8 @@
 import 'dart:io';
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:google_generative_ai/google_generative_ai.dart';
-import 'dart:typed_data';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:note_bot/screens/bottomnavbar.dart';
 import 'package:note_bot/screens/sidebar.dart';
@@ -11,14 +11,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 class UploadScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'NoteBot',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-        fontFamily: "Montserrat",
-      ),
-      home: UploadPage(),
-    );
+    return UploadPage();
   }
 }
 
@@ -229,8 +222,9 @@ class _UploadPageState extends State<UploadPage> {
                         margin: EdgeInsets.only(top: 30.0),
                         width: constraints.maxWidth,
                         decoration: BoxDecoration(
-                            border: Border(
-                                bottom: BorderSide(color: Colors.white))),
+                          border:
+                              Border(bottom: BorderSide(color: Colors.white)),
+                        ),
                         child: Padding(
                           padding: const EdgeInsets.only(bottom: 10.0),
                           child: Text(

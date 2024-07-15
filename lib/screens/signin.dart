@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_signin_button/flutter_signin_button.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:firebase_auth/firebase_auth.dart'; // Import Firebase Auth
+import 'package:shared_preferences/shared_preferences.dart';
 
 class SignInScreen extends StatefulWidget {
   @override
@@ -13,6 +14,11 @@ class _SignInScreenState extends State<SignInScreen> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   String? _errorMessage;
+
+  Future<void> _setLoginStatus(bool status) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('isLoggedIn', status);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -174,6 +180,8 @@ class _SignInScreenState extends State<SignInScreen> {
                                         password:
                                             _passwordController.text.trim(),
                                       );
+                                      await _setLoginStatus(
+                                          true); // Save login status
                                       // Navigate to HomeScreen after successful sign in
                                       Navigator.pushReplacementNamed(
                                           context, '/home');
@@ -237,6 +245,8 @@ class _SignInScreenState extends State<SignInScreen> {
                                             .signInWithPopup(
                                           GoogleAuthProvider(),
                                         );
+                                        await _setLoginStatus(
+                                            true); // Save login status
                                         // Navigate to HomeScreen after successful Google sign in
                                         Navigator.pushReplacementNamed(
                                             context, '/home');
@@ -271,6 +281,8 @@ class _SignInScreenState extends State<SignInScreen> {
                                             .signInWithPopup(
                                           GithubAuthProvider(),
                                         );
+                                        await _setLoginStatus(
+                                            true); // Save login status
                                         // Navigate to HomeScreen after successful GitHub sign in
                                         Navigator.pushReplacementNamed(
                                             context, '/home');
@@ -427,6 +439,8 @@ class _SignInScreenState extends State<SignInScreen> {
                                   email: _emailController.text.trim(),
                                   password: _passwordController.text.trim(),
                                 );
+                                await _setLoginStatus(
+                                    true); // Save login status
                                 // Navigate to HomeScreen after successful sign in
                                 Navigator.pushReplacementNamed(
                                     context, '/home');
@@ -486,6 +500,8 @@ class _SignInScreenState extends State<SignInScreen> {
                                   await FirebaseAuth.instance.signInWithPopup(
                                     GoogleAuthProvider(),
                                   );
+                                  await _setLoginStatus(
+                                      true); // Save login status
                                   // Navigate to HomeScreen after successful Google sign in
                                   Navigator.pushReplacementNamed(
                                       context, '/home');
@@ -518,6 +534,8 @@ class _SignInScreenState extends State<SignInScreen> {
                                   await FirebaseAuth.instance.signInWithPopup(
                                     GithubAuthProvider(),
                                   );
+                                  await _setLoginStatus(
+                                      true); // Save login status
                                   // Navigate to HomeScreen after successful GitHub sign in
                                   Navigator.pushReplacementNamed(
                                       context, '/home');
