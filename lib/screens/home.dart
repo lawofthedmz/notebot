@@ -160,20 +160,58 @@ class ListWidget extends StatelessWidget {
       shrinkWrap: true,
       children: items.map((item) {
         return Container(
-          width: 2.0,
-          decoration: BoxDecoration(
-            border: Border(
-              top: BorderSide(color: Colors.white),
-              bottom: BorderSide(color: Colors.white),
+            width: 2.0,
+            decoration: BoxDecoration(
+              border: Border(
+                top: BorderSide(color: Colors.white),
+                bottom: BorderSide(color: Colors.white),
+              ),
             ),
-          ),
-          child: ListTile(
-            title: Text(
-              item,
-              style: TextStyle(color: Colors.white),
-            ),
-          ),
-        );
+            child: Row(
+              children: [
+                Container(
+                    width: 100.0,
+                    child: Text(
+                      item,
+                      style: TextStyle(color: Colors.white),
+                    )),
+                Container(
+                    child: Text("Date", style: TextStyle(color: Colors.white))),
+                Expanded(
+                  child: Align(
+                    alignment: Alignment.centerRight,
+                    child: Padding(
+                      padding: const EdgeInsets.only(right:10.0),
+                      child: PopupMenuButton<String>(
+                        icon: Icon(
+                          Icons.more_horiz,
+                          color: Colors.white,
+                        ),
+                        onSelected: (String result) {
+                          // Handle the selected option here
+                          if (result == 'edit') {
+                            // Edit action
+                          } else if (result == 'delete') {
+                            // Delete action
+                          }
+                        },
+                        itemBuilder: (BuildContext context) =>
+                            <PopupMenuEntry<String>>[
+                          const PopupMenuItem<String>(
+                            value: 'edit',
+                            child: Text('Edit'),
+                          ),
+                          const PopupMenuItem<String>(
+                            value: 'delete',
+                            child: Text('Delete'),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                )
+              ],
+            ));
       }).toList(growable: false),
     );
   }
