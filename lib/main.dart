@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:note_bot/screens/editnote.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'screens/viewprofile.dart';
 import 'screens/create.dart';
@@ -18,7 +19,7 @@ void main() async {
   await dotenv.load(fileName: ".env");
   SharedPreferences prefs = await SharedPreferences.getInstance();
   bool? isLoggedIn = prefs.getBool('isLoggedIn');
-  runApp(MyApp(isLoggedIn: isLoggedIn ?? false));
+  runApp(MyApp(isLoggedIn: true));
 }
 
 class MyApp extends StatelessWidget {
@@ -41,6 +42,7 @@ class MyApp extends StatelessWidget {
         '/home': (context) => HomeScreen(),
         '/viewprofile': (context) => ViewProfile(),
         '/upload': (context) => UploadScreen(),
+        '/edit': (context) => EditNoteScreen(),
         // '/editprofile': (context) => EditProfileScreen(),
       },
     );

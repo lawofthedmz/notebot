@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:note_bot/screens/bottomnavbar.dart';
-import 'package:note_bot/screens/editnote.dart';
 import 'package:note_bot/screens/sidebar.dart';
 
-class HomeScreen extends StatelessWidget {
+class EditNoteScreen extends StatelessWidget {
   final List<String> items = List.generate(20, (index) => 'Item $index');
 
   @override
@@ -53,10 +52,10 @@ class HomeScreen extends StatelessWidget {
                             Padding(
                               padding: const EdgeInsets.only(
                                   left: 30.0, top: 70.0, bottom: 30.0),
-                              child: SizedBox(
+                              child: Container(
+                                  decoration: BoxDecoration(color: Color.fromARGB(73, 255, 255, 255), borderRadius: BorderRadius.all(Radius.circular(35.0))),
                                 height: 30.0,
                                 width: constraints.maxWidth / 3,
-                                child: SearchBarModule(),
                               ),
                             ),
                             Padding(
@@ -64,17 +63,29 @@ class HomeScreen extends StatelessWidget {
                               child: SizedBox(
                                 width: constraints.maxWidth / 2,
                                 height: 300.0,
-                                child: RawScrollbar(
-                                  thumbColor: Colors.white,
-                                  radius: Radius.circular(50.0),
-                                  thickness: 10.0,
-                                  thumbVisibility: true,
-                                  controller: _controller,
-                                  child: ListWidget(
-                                      items: items, Scontroller: _controller),
+                                child: Container(
+                                  decoration: BoxDecoration(color: Color.fromARGB(73, 255, 255, 255), borderRadius: BorderRadius.all(Radius.circular(15.0))),
+                                  height: 30.0,
+                                  width: constraints.maxWidth / 3,
                                 ),
                               ),
                             ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.only(top: 51.0, right: 27.0),
+                                  child: ElevatedButton(
+                                    style: ButtonStyle(),
+                                      onPressed: () {}, child: Text("Save")),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.only(top:51.0),
+                                  child: ElevatedButton(
+                                      onPressed: () {}, child: Text("Cancel")),
+                                ),
+                              ],
+                            )
                           ],
                         ),
                       ),
@@ -117,7 +128,7 @@ class HomeScreen extends StatelessWidget {
                               child: SizedBox(
                                 height: 30.0,
                                 width: constraints.maxWidth - 150,
-                                child: SearchBarModule(),
+                                child: Text("Hi"),
                               ),
                             ),
                             Padding(
@@ -127,11 +138,9 @@ class HomeScreen extends StatelessWidget {
                                 height:
                                     MediaQuery.of(context).size.height - 250.0,
                                 child: RawScrollbar(
-                                  thumbVisibility: false,
-                                  controller: _controller,
-                                  child: ListWidget(
-                                      items: items, Scontroller: _controller),
-                                ),
+                                    thumbVisibility: false,
+                                    controller: _controller,
+                                    child: Text("Hi")),
                               ),
                             ),
                           ],
@@ -145,130 +154,6 @@ class HomeScreen extends StatelessWidget {
           ),
         ],
       ),
-    );
-  }
-}
-
-class ListWidget extends StatelessWidget {
-  const ListWidget({super.key, required this.items, required this.Scontroller});
-
-  final List<String> items;
-  final ScrollController Scontroller;
-  @override
-  Widget build(BuildContext context) {
-    return ListView(
-      controller: Scontroller,
-      shrinkWrap: true,
-      children: items.map((item) {
-        return Container(
-            width: 2.0,
-            decoration: BoxDecoration(
-              border: Border(
-                top: BorderSide(color: Colors.white),
-                bottom: BorderSide(color: Colors.white),
-              ),
-            ),
-            child: Row(
-              children: [
-                Container(
-                    width: 100.0,
-                    child: Text(
-                      item,
-                      style: TextStyle(color: Colors.white),
-                    )),
-                Container(
-                    child: Text("Date", style: TextStyle(color: Colors.white))),
-                Expanded(
-                  child: Align(
-                    alignment: Alignment.centerRight,
-                    child: Padding(
-                      padding: const EdgeInsets.only(right:10.0),
-                      child: PopupMenuButton<String>(
-                        icon: Icon(
-                          Icons.more_horiz,
-                          color: Colors.white,
-                        ),
-                        onSelected: (String result) {
-                          // Handle the selected option here
-                          if (result == 'edit') {
-                            Navigator.pushReplacement(context,
-                  MaterialPageRoute(builder: (context) => EditNoteScreen()));
-                          } else if (result == 'delete') {
-                            // Delete action
-                          }
-                        },
-                        itemBuilder: (BuildContext context) =>
-                            <PopupMenuEntry<String>>[
-                          const PopupMenuItem<String>(
-                            value: 'edit',
-                            child: Text('Edit'),
-                          ),
-                          const PopupMenuItem<String>(
-                            value: 'delete',
-                            child: Text('Delete'),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                )
-              ],
-            ));
-      }).toList(growable: false),
-    );
-  }
-}
-
-class SearchBarModule extends StatefulWidget {
-  const SearchBarModule({super.key});
-
-  @override
-  State<SearchBarModule> createState() => _SearchBarState();
-}
-
-class _SearchBarState extends State<SearchBarModule> {
-  @override
-  Widget build(BuildContext context) {
-    return SearchAnchor(
-      builder: (BuildContext context, SearchController controller) {
-        return SizedBox(
-          width: 2.0,
-          child: SearchBar(
-            controller: controller,
-            onTap: () {
-              controller.openView();
-            },
-            onChanged: (_) {
-              controller.openView();
-            },
-            leading: const Row(children: const [
-              Icon(
-                Icons.search_rounded,
-                color: Colors.white,
-              ),
-              Text(
-                "Search",
-                style: TextStyle(color: Colors.white),
-              )
-            ]),
-            backgroundColor:
-                WidgetStateProperty.all(Color.fromARGB(34, 0, 0, 0)),
-          ),
-        );
-      },
-      suggestionsBuilder: (BuildContext context, SearchController controller) {
-        return List<ListTile>.generate(5, (int index) {
-          final String item = 'item $index';
-          return ListTile(
-            title: Text(item),
-            onTap: () {
-              setState(() {
-                controller.closeView(item);
-              });
-            },
-          );
-        });
-      },
     );
   }
 }
