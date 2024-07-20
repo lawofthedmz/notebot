@@ -19,7 +19,7 @@ void main() async {
   await dotenv.load(fileName: ".env");
   SharedPreferences prefs = await SharedPreferences.getInstance();
   bool? isLoggedIn = prefs.getBool('isLoggedIn');
-  runApp(MyApp(isLoggedIn: true));
+  runApp(MyApp(isLoggedIn: isLoggedIn ?? false));
 }
 
 class MyApp extends StatelessWidget {
