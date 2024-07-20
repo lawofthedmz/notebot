@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:note_bot/screens/bottomnavbar.dart';
+import 'package:note_bot/screens/editnote.dart';
 import 'package:note_bot/screens/sidebar.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -190,7 +191,8 @@ class ListWidget extends StatelessWidget {
                         onSelected: (String result) {
                           // Handle the selected option here
                           if (result == 'edit') {
-                            // Edit action
+                            Navigator.pushReplacement(context,
+                  MaterialPageRoute(builder: (context) => EditNoteScreen()));
                           } else if (result == 'delete') {
                             // Delete action
                           }
