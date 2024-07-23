@@ -5,6 +5,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:google_generative_ai/google_generative_ai.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:note_bot/screens/bottomnavbar.dart';
+import 'package:note_bot/screens/pdfpreview.dart';
 import 'package:note_bot/screens/sidebar.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
@@ -23,7 +24,7 @@ class UploadPage extends StatefulWidget {
 class _UploadPageState extends State<UploadPage> {
   PlatformFile? _selectedFile;
   bool _isUploading = false;
-  String? _notesheet;
+  String _notesheet = "";
   GenerativeModel? _model;
 
   @override
@@ -43,7 +44,31 @@ class _UploadPageState extends State<UploadPage> {
       }
 
       setState(() {
-        _model = GenerativeModel(model: 'gemini-pro-vision', apiKey: apiKey);
+        _model = GenerativeModel(model: 'gemini-1.5-pro', apiKey: apiKey, systemInstruction: Content.system("""
+          Create a note sheet for the file with keypoints and summary.
+Provide the output in the following JSON format only, with no additional text:
+
+{
+  "title": "A concise, descriptive title for the overall notes",
+  "summary": "A brief (2-3 sentences) summary of the main points",
+  "notes": [
+    ["Subheading 1", "Content for subheading 1. Use *asterisks* for emphasis and - for bullet points."],
+    ["Subheading 2", "Content for subheading 2"],
+    ...
+  ]
+}
+
+Guidelines:
+1. Include 5-7 key points with brief explanations for each.
+2. Each tuple in the "notes" list should have a subheading as the first element and the corresponding content as the second element.
+3. Use *asterisks* to indicate emphasized text and - for bullet points in the content.
+
+If you're unable to generate notes from the given content, please respond with:
+{
+  "error": "Brief explanation of why notes couldn't be generated"
+}
+
+This output will be used to generate a PDF, so adhere strictly to the JSON format specified."""));  
       });
     } catch (e) {
       print('Error loading API key: $e');
@@ -53,7 +78,7 @@ class _UploadPageState extends State<UploadPage> {
   Future<void> _pickFile() async {
     FilePickerResult? result = await FilePicker.platform.pickFiles(
       type: FileType.custom,
-      allowedExtensions: ['pdf', 'doc', 'docx', 'jpg', 'png'],
+      allowedExtensions: ['jpg', 'png'],
     );
 
     if (result != null) {
@@ -103,22 +128,23 @@ class _UploadPageState extends State<UploadPage> {
 
   Future<void> _createNotesheet(Uint8List fileBytes) async {
     try {
-      final prompt = TextPart(
-          "Create a note sheet for the file with keypoints and summary.");
       final imagePart = DataPart('image/jpeg', fileBytes);
 
       final content = [
-        Content.multi([prompt, imagePart])
+        Content.multi([imagePart])
       ];
 
       final GenerateContentResponse response =
           await _model!.generateContent(content);
 
       setState(() {
-        _notesheet = response.text;
+        _notesheet = response.text!;
       });
 
       print('Notesheet received: ${response.text}');
+      Navigator.of(context).push(MaterialPageRoute(builder: (context){
+            return  PdfPreviewPage(_notesheet);
+          }));
     } catch (e) {
       print('Error generating notesheet: $e');
     }
@@ -267,10 +293,7 @@ class _UploadPageState extends State<UploadPage> {
                                   ? Text(
                                       'Selected file: ${_selectedFile!.name}')
                                   : Text('No file selected'),
-                              SizedBox(height: 20),
-                              _notesheet != null
-                                  ? Text('Notesheet: $_notesheet')
-                                  : Text('No notesheet available'),
+
                             ],
                           ),
                         ),

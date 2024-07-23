@@ -22,6 +22,8 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  pdf: ^3.9.0 
+  printing: ^5.4.2  
   flutter_signin_button: ^2.0.0
   flutter_svg: ^2.0.10+1
   file_picker: ^8.0.6
