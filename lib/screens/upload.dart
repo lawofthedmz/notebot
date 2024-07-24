@@ -8,6 +8,7 @@ import 'package:note_bot/screens/bottomnavbar.dart';
 import 'package:note_bot/screens/pdfpreview.dart';
 import 'package:note_bot/screens/sidebar.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:loader_overlay/loader_overlay.dart';
 
 class UploadScreen extends StatelessWidget {
   @override
@@ -26,6 +27,7 @@ class _UploadPageState extends State<UploadPage> {
   bool _isUploading = false;
   String _notesheet = "";
   GenerativeModel? _model;
+  List<String> allowed_extensions = ['jpg', 'png'];
 
   @override
   void initState() {
@@ -44,7 +46,10 @@ class _UploadPageState extends State<UploadPage> {
       }
 
       setState(() {
-        _model = GenerativeModel(model: 'gemini-1.5-pro', apiKey: apiKey, systemInstruction: Content.system("""
+        _model = GenerativeModel(
+            model: 'gemini-1.5-pro',
+            apiKey: apiKey,
+            systemInstruction: Content.system("""
           Create a note sheet for the file with keypoints and summary.
 Provide the output in the following JSON format only, with no additional text:
 
@@ -68,7 +73,7 @@ If you're unable to generate notes from the given content, please respond with:
   "error": "Brief explanation of why notes couldn't be generated"
 }
 
-This output will be used to generate a PDF, so adhere strictly to the JSON format specified."""));  
+This output will be used to generate a PDF, so adhere strictly to the JSON format specified."""));
       });
     } catch (e) {
       print('Error loading API key: $e');
@@ -78,7 +83,7 @@ This output will be used to generate a PDF, so adhere strictly to the JSON forma
   Future<void> _pickFile() async {
     FilePickerResult? result = await FilePicker.platform.pickFiles(
       type: FileType.custom,
-      allowedExtensions: ['jpg', 'png'],
+      allowedExtensions: allowed_extensions,
     );
 
     if (result != null) {
@@ -91,15 +96,40 @@ This output will be used to generate a PDF, so adhere strictly to the JSON forma
     }
   }
 
+  Future<void> _showAlertDialog({required String alertText}) async {
+
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Error'),
+          content: Text(alertText),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('Ok'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   Future<void> _processFile() async {
     if (_selectedFile == null || _model == null) {
-      print('No file selected or model not initialized');
+      _showAlertDialog(alertText: 'No file selected or model not initialized');
+      return;
+    } else if (!allowed_extensions.contains(_selectedFile!.extension)) {
+      _showAlertDialog(alertText: 'Invalid Extension');
       return;
     }
-
-    setState(() {
-      _isUploading = true;
-    });
+      setState(() {
+        _isUploading = true;
+        context.loaderOverlay.show();
+      });
 
     try {
       Uint8List? fileBytes;
@@ -122,6 +152,7 @@ This output will be used to generate a PDF, so adhere strictly to the JSON forma
     } finally {
       setState(() {
         _isUploading = false;
+        context.loaderOverlay.hide();
       });
     }
   }
@@ -142,9 +173,9 @@ This output will be used to generate a PDF, so adhere strictly to the JSON forma
       });
 
       print('Notesheet received: ${response.text}');
-      Navigator.of(context).push(MaterialPageRoute(builder: (context){
-            return  PdfPreviewPage(_notesheet);
-          }));
+      Navigator.of(context).push(MaterialPageRoute(builder: (context) {
+        return PdfPreviewPage(_notesheet);
+      }));
     } catch (e) {
       print('Error generating notesheet: $e');
     }
@@ -153,159 +184,172 @@ This output will be used to generate a PDF, so adhere strictly to the JSON forma
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      extendBody: true,
-      bottomNavigationBar:
-          MediaQuery.of(context).size.width < 800 ? BottomNavBar() : null,
-      body: Stack(
-        children: [
-          // Gradient Background
-          Container(
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [Color(0xFF712A89), Color(0xFF140609)],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
+        extendBody: true,
+        bottomNavigationBar:
+            MediaQuery.of(context).size.width < 800 ? BottomNavBar() : null,
+        body: LoaderOverlay(
+          overlayColor: Color.fromARGB(168, 74, 74, 74),
+          child: Stack(
+            children: [
+              // Gradient Background
+              Container(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [Color(0xFF712A89), Color(0xFF140609)],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ),
+                ),
               ),
-            ),
-          ),
-          // SVG Overlay
-          Positioned.fill(
-            child: SvgPicture.asset(
-              'assets/background.svg',
-              fit: BoxFit.cover,
-            ),
-          ),
-          LayoutBuilder(
-            builder: (BuildContext context, BoxConstraints constraints) {
-              if (constraints.maxWidth > 800) {
-                return SizedBox(
-                  height: constraints.maxHeight,
-                  width: constraints.maxWidth,
-                  child: Row(
-                    children: <Widget>[
-                      SizedBox(
-                        height: constraints.maxHeight,
-                        child: Sidebar(),
-                      ),
-                      Expanded(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.only(
-                                  left: 30.0, top: 70.0, bottom: 30.0),
-                              child: SizedBox(
-                                height: 30.0,
-                                width: constraints.maxWidth / 3,
-                                child: ElevatedButton(
-                                  onPressed: _pickFile,
-                                  child: Text('Pick File'),
-                                ),
-                              ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.only(left: 40.0),
-                              child: SizedBox(
-                                width: constraints.maxWidth / 2,
-                                height: 300.0,
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: <Widget>[
-                                    ElevatedButton(
-                                      onPressed:
-                                          _isUploading ? null : _processFile,
-                                      child: Text(_isUploading
-                                          ? 'Processing...'
-                                          : 'Process File'),
+              // SVG Overlay
+              Positioned.fill(
+                child: SvgPicture.asset(
+                  'assets/background.svg',
+                  fit: BoxFit.cover,
+                ),
+              ),
+              LayoutBuilder(
+                builder: (BuildContext context, BoxConstraints constraints) {
+                  if (constraints.maxWidth > 800) {
+                    return SizedBox(
+                      height: constraints.maxHeight,
+                      width: constraints.maxWidth,
+                      child: Row(
+                        children: <Widget>[
+                          SizedBox(
+                            height: constraints.maxHeight,
+                            child: Sidebar(),
+                          ),
+                          Expanded(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.only(
+                                    left: 30.0,
+                                    top: 70.0,
+                                  ),
+                                  child: SizedBox(
+                                    width: constraints.maxWidth / 3,
+                                    child: ElevatedButton(
+                                      onPressed: _pickFile,
+                                      child: Text('Pick File'),
                                     ),
-                                    SizedBox(height: 20),
-                                    _selectedFile != null
-                                        ? Text(
-                                            'Selected file: ${_selectedFile!.name}')
-                                        : Text('No file selected'),
-                                    SizedBox(height: 20),
-                                    _notesheet != null
-                                        ? Text('Notesheet: $_notesheet')
-                                        : Text('No notesheet available'),
-                                  ],
+                                  ),
                                 ),
+                                Padding(
+                                  padding: const EdgeInsets.only(left: 40.0),
+                                  child: SizedBox(
+                                    width: constraints.maxWidth / 2,
+                                    height: 300.0,
+                                    child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: <Widget>[
+                                        _selectedFile != null
+                                            ? Text(
+                                                'Selected file: ${_selectedFile!.name}',
+                                                style: TextStyle(
+                                                    color: Colors.white,
+                                                    fontSize: 24.0),
+                                              )
+                                            : Text(
+                                                'No file selected',
+                                                style: TextStyle(
+                                                    color: Colors.white,
+                                                    fontSize: 24.0),
+                                              ),
+                                        SizedBox(height: 20),
+                                        ElevatedButton(
+                                          onPressed: _isUploading
+                                              ? null
+                                              : _processFile,
+                                          child: Text(_isUploading
+                                              ? 'Processing...'
+                                              : 'Process File'),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
+                  } else {
+                    return SizedBox(
+                      height: constraints.maxHeight,
+                      width: constraints.maxWidth,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Container(
+                            margin: EdgeInsets.only(top: 30.0),
+                            width: constraints.maxWidth,
+                            decoration: BoxDecoration(
+                              border: Border(
+                                  bottom: BorderSide(color: Colors.white)),
+                            ),
+                            child: Padding(
+                              padding: const EdgeInsets.only(bottom: 10.0),
+                              child: Text(
+                                "Upload",
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                    color:
+                                        const Color.fromARGB(255, 39, 36, 36),
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 20.0),
                               ),
                             ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                );
-              } else {
-                return SizedBox(
-                  height: constraints.maxHeight,
-                  width: constraints.maxWidth,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Container(
-                        margin: EdgeInsets.only(top: 30.0),
-                        width: constraints.maxWidth,
-                        decoration: BoxDecoration(
-                          border:
-                              Border(bottom: BorderSide(color: Colors.white)),
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.only(bottom: 10.0),
-                          child: Text(
-                            "Upload",
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 20.0),
                           ),
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(top: 30.0, bottom: 30.0),
-                        child: SizedBox(
-                          height: 30.0,
-                          width: constraints.maxWidth - 150,
-                          child: ElevatedButton(
-                            onPressed: _pickFile,
-                            child: Text('Pick File'),
-                          ),
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(left: 20.0),
-                        child: SizedBox(
-                          width: constraints.maxWidth - 100.0,
-                          height: MediaQuery.of(context).size.height - 250.0,
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: <Widget>[
-                              ElevatedButton(
-                                onPressed: _isUploading ? null : _processFile,
-                                child: Text(_isUploading
-                                    ? 'Processing...'
-                                    : 'Process File'),
+                          Padding(
+                            padding:
+                                const EdgeInsets.only(top: 30.0, bottom: 30.0),
+                            child: SizedBox(
+                              height: 30.0,
+                              width: constraints.maxWidth - 150,
+                              child: ElevatedButton(
+                                onPressed: _pickFile,
+                                child: Text('Pick File'),
                               ),
-                              SizedBox(height: 20),
-                              _selectedFile != null
-                                  ? Text(
-                                      'Selected file: ${_selectedFile!.name}')
-                                  : Text('No file selected'),
-
-                            ],
+                            ),
                           ),
-                        ),
+                          Padding(
+                            padding: const EdgeInsets.only(left: 20.0),
+                            child: SizedBox(
+                              width: constraints.maxWidth - 100.0,
+                              height:
+                                  MediaQuery.of(context).size.height - 250.0,
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: <Widget>[
+                                  ElevatedButton(
+                                    onPressed:
+                                        _isUploading ? null : _processFile,
+                                    child: Text(_isUploading
+                                        ? 'Processing...'
+                                        : 'Process File'),
+                                  ),
+                                  SizedBox(height: 20),
+                                  _selectedFile != null
+                                      ? Text(
+                                          'Selected file: ${_selectedFile!.name}')
+                                      : Text('No file selected'),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
-                    ],
-                  ),
-                );
-              }
-            },
+                    );
+                  }
+                },
+              ),
+            ],
           ),
-        ],
-      ),
-    );
+        ));
   }
 }
